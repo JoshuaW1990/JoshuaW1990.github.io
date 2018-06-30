@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="统计学习统计学习包括监督学习、非监督学习、半监督学习和强化学习（《统计学习方法》中主要讨论监督学习）。">
+<meta name="keywords" content="统计学习方法,机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计学习方法概论">
+<meta property="og:url" content="https://joshuaw1990.github.io/2017/11/27/统计学习方法概论/index.html">
+<meta property="og:site_name" content="荒草园子">
+<meta property="og:description" content="统计学习统计学习包括监督学习、非监督学习、半监督学习和强化学习（《统计学习方法》中主要讨论监督学习）。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-06-30T12:39:19.285Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="统计学习方法概论">
+<meta name="twitter:description" content="统计学习统计学习包括监督学习、非监督学习、半监督学习和强化学习（《统计学习方法》中主要讨论监督学习）。">
+
+
+
+
+
+
+  <link rel="canonical" href="https://joshuaw1990.github.io/2017/11/27/统计学习方法概论/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>统计学习方法概论 | 荒草园子</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">荒草园子</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">这里没有酒也没有故事</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-笔记">
+    <a href="/note/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />笔记</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://joshuaw1990.github.io/2017/11/27/统计学习方法概论/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JoshuaW1990">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="荒草园子">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">统计学习方法概论
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-11-27 17:59:59" itemprop="dateCreated datePublished" datetime="2017-11-27T17:59:59+08:00">2017-11-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-06-30 20:39:19" itemprop="dateModified" datetime="2018-06-30T20:39:19+08:00">2018-06-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/读书笔记/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="统计学习"><a href="#统计学习" class="headerlink" title="统计学习"></a>统计学习</h1><p>统计学习包括监督学习、非监督学习、半监督学习和强化学习（《统计学习方法》中主要讨论监督学习）。</p>
+<a id="more"></a>
+<h1 id="监督学习"><a href="#监督学习" class="headerlink" title="监督学习"></a>监督学习</h1><p>根据有限的训练数据，假设数据是独立同分布且假设模型属于某假设空间，采用某一种评价标准，从这个假设空间中选择出最优模型，以便使其对训练数据和为知测试数据在其评价标准下都有最佳的表现（准确的预测）。</p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="空间"><a href="#空间" class="headerlink" title="空间"></a>空间</h3><ul>
+<li>输入空间</li>
+<li>特征空间：特征向量</li>
+<li>输出空间</li>
+</ul>
+<p>在具体操作中，有时假设<strong>输入空间</strong>与<strong>特征空间</strong>相同，有时则根据需要假定两者不同，并存在映射关系可以将实例从<strong>输入空间</strong>映射到<strong>特征空间</strong></p>
+<h3 id="联合概率分布"><a href="#联合概率分布" class="headerlink" title="联合概率分布"></a>联合概率分布</h3><p>监督学习中假设输入与输出的随机变量X与Y遵循联合概率分布P(X,Y)，这是监督学习关于数据的基本假设。在实际操作中，其具体的联合概率分布定义通常未知，但是训练数据和测试数据被看做是依照该联合概率分布P(X,Y)独立同分布产生。</p>
+<h3 id="假设空间"><a href="#假设空间" class="headerlink" title="假设空间"></a>假设空间</h3><p>监督学习中各种表达从输入空间到输出空间的模型共同构成的集合被称为假设空间，确定假设空间的过程也就是确定学习范围的过程。</p>
+<p>假设空间用$F$表示，参数向量用$\theta$表示</p>
+<ul>
+<li>概率模型： 条件概率分布P(Y|X)<br>$F=\{P|P_\theta(Y|X), \theta\in{R^n}\}$</li>
+<li>非概率模型：决策函数Y=f(X)<br>$F=\{f|Y=f_{\theta}(X), \theta\in{R^n}\}$</li>
+</ul>
+<p>其具体模型由具体学习方法而定。</p>
+<h2 id="问题的形式化"><a href="#问题的形式化" class="headerlink" title="问题的形式化"></a>问题的形式化</h2><p>给定训练数据集</p>
+<script type="math/tex; mode=display">T=\{(x_1, y_1), (x_2, y_2), ..., (x_N, y_N)\}</script><p>其中$(x_i, y_i), i=1,2,…,N$是样本点， $x_i\in{x}\subset{R^n}$是输入的观测值，<br>$y_i\in{y}$是输出的观测值。</p>
+<p>通过学习得到的模型通常被表示为条件概率分布 $\hat{P}(Y|X)$ 或决策函数 $Y=\hat{f}(X)$。<br>预测过程即是指由样本集的 $x_k,k=N+1$ 通过 </p>
+<script type="math/tex; mode=display">y_k=\mathop{argmax}_{y_k}{\hat{P}(y_k|X_k)}</script><p>或 </p>
+<script type="math/tex; mode=display">y_k=\hat{f}(x_k)</script><p>得到对应的输出 $y_k$。</p>
+<h1 id="统计学习三要素"><a href="#统计学习三要素" class="headerlink" title="统计学习三要素"></a>统计学习三要素</h1><p>方法=模型+策略+算法</p>
+<ul>
+<li>模型</li>
+<li>策略：选择最优模型的准则</li>
+<li>算法</li>
+</ul>
+<h2 id="策略"><a href="#策略" class="headerlink" title="策略"></a>策略</h2><h3 id="损失函数和风险函数"><a href="#损失函数和风险函数" class="headerlink" title="损失函数和风险函数"></a>损失函数和风险函数</h3><h4 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h4><p>常用的损失函数：</p>
+<ul>
+<li>0-1损失函数<script type="math/tex; mode=display">
+L(Y,f(X)) =
+\begin{cases}
+0, & \text{Y = f(X)}  \\
+1, & \text{Y $\neq$ f(X)}
+\end{cases}</script></li>
+<li>平方损失函数<script type="math/tex; mode=display">L(Y,f(X)) = {(Y-f(X))}^2</script></li>
+<li>绝对损失函数<script type="math/tex; mode=display">L(Y,f(X)) = |(Y-f(X))|</script></li>
+<li>对数损失函数<script type="math/tex; mode=display">L(Y,P(Y|X) = -logP(Y|X)</script></li>
+</ul>
+<h4 id="风险函数（期望损失）"><a href="#风险函数（期望损失）" class="headerlink" title="风险函数（期望损失）"></a>风险函数（期望损失）</h4><p>损失函数的期望就是风险函数：</p>
+<script type="math/tex; mode=display">R_{exp}(f) = E_{p}[L(Y, f(X))] = \int_{x\times y} L(y, f(x))P(x,y)dxdy</script><p>由于联合分布P(X,Y)是未知的，因此，引入<strong>经验风险</strong>，也就是训练数据集的平均损失</p>
+<script type="math/tex; mode=display">R_{emp}(f) = \frac{1}{N} \sum_{i=1}^{N} L(y_i,f(x_i))</script><p>由于只有当样本量N无穷大的时候，经验风险$R<em>{emp}(f)$才能趋近于期望风险$R</em>{exp}(f)$，因此在现实中，经验风险并不能直接估计期望风险，需要进行校正：</p>
+<ul>
+<li>经验风险最小化</li>
+<li>结构风险最小化</li>
+</ul>
+<h3 id="经验风险的矫正"><a href="#经验风险的矫正" class="headerlink" title="经验风险的矫正"></a>经验风险的矫正</h3><h4 id="经验风险最小化"><a href="#经验风险最小化" class="headerlink" title="经验风险最小化"></a>经验风险最小化</h4><p>经验风险最小的模型就是最优模型</p>
+<script type="math/tex; mode=display">\min_{f\in{F}} \frac{1}{N} \sum_{i=1}^{N} L(y_i,f(x_i))</script><p>极大似然估计就是经验风险最小化。</p>
+<h4 id="结构风险最小化"><a href="#结构风险最小化" class="headerlink" title="结构风险最小化"></a>结构风险最小化</h4><p>提出目的是为了防止过拟合，因此等价于正则化，需要在经验风险上加上表示模型复杂度的正则化项。</p>
+<script type="math/tex; mode=display">R_{srm}(f) = \frac{1}{N} \sum_{i=1}^{N} L(y_i,f(x_i))+\lambda J(f)</script><p>其中， J(f)表示模型复杂度， 模型f越复杂，J(f)越大，$\lambda \ge 0$是系数。</p>
+<script type="math/tex; mode=display">\min_{f\in{F}} \frac{1}{N} \sum_{i=1}^{N} L(y_i,f(x_i)) + \lambda J(f)</script><p>最大后验概率估计就是结构风险最小化。</p>
+<h1 id="模型评估与模型选择"><a href="#模型评估与模型选择" class="headerlink" title="模型评估与模型选择"></a>模型评估与模型选择</h1><h2 id="训练误差与测试误差"><a href="#训练误差与测试误差" class="headerlink" title="训练误差与测试误差"></a>训练误差与测试误差</h2><p>假设学习到的模型是$Y = \hat{f}(X)$, 则<br>训练误差是训练数据集的平均损失：</p>
+<script type="math/tex; mode=display">R_{emp}(\hat{f}) = \frac{1}{N} \sum_{N}^{i=1} L(y_i,\hat{f}(x_i))</script><p>测试误差是测试数据集的平均损失：</p>
+<script type="math/tex; mode=display">e_{test} = \frac{1}{N'} \sum_{N'}^{i=1} L(y_i,\hat{f}(x_i))</script><p>泛化能力： 学习方法对未知数据的预测能力</p>
+<h2 id="过拟合与模型选择"><a href="#过拟合与模型选择" class="headerlink" title="过拟合与模型选择"></a>过拟合与模型选择</h2><p>过拟合：模型复杂度比真模型更高的现象</p>
+<h1 id="正则化与交叉验证"><a href="#正则化与交叉验证" class="headerlink" title="正则化与交叉验证"></a>正则化与交叉验证</h1><p>正则化与交叉验证是两种模型选择的方法</p>
+<h2 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h2><p>如前述，正则化是一种结构风险最小化的策略，通过给经验风险加上正则项来实现。一般而言，模型越复杂， 正则化值就越大。</p>
+<p>$L_1$范数：</p>
+<script type="math/tex; mode=display">L(w) = \frac{1}{N} \sum_{i=1}^{N} (f(x_i;w) - y_i)^2 + \lambda {\left\| w \right\|}_1</script><p>${\left| w \right|}_1$表示参数向量w的范数</p>
+<p>$L_2$范数：</p>
+<script type="math/tex; mode=display">L(w) = \frac{1}{N} \sum_{i=1}^{N} (f(x_i;w) - y_i)^2 + \frac{\lambda}{2} {\left\| w \right\|}^2</script><p>${\left| w \right|}$表示参数向量w的范数</p>
+<h2 id="交叉验证"><a href="#交叉验证" class="headerlink" title="交叉验证"></a>交叉验证</h2><h3 id="简单交叉验证"><a href="#简单交叉验证" class="headerlink" title="简单交叉验证"></a>简单交叉验证</h3><h3 id="S折交叉验证"><a href="#S折交叉验证" class="headerlink" title="S折交叉验证"></a>S折交叉验证</h3><h3 id="留一交叉验证"><a href="#留一交叉验证" class="headerlink" title="留一交叉验证"></a>留一交叉验证</h3><h1 id="泛化能力"><a href="#泛化能力" class="headerlink" title="泛化能力"></a>泛化能力</h1><h2 id="泛化误差"><a href="#泛化误差" class="headerlink" title="泛化误差"></a>泛化误差</h2><p>模型对未知数据 的误差即为泛化误差（对未知数据的期望损失）。</p>
+<h2 id="泛化误差上界"><a href="#泛化误差上界" class="headerlink" title="泛化误差上界"></a>泛化误差上界</h2><p>泛化误差上界通常是用来衡量模型泛化能力的基本准则。</p>
+<p><strong>定理</strong> 泛化误差上界<br>对二类分类问题，当假设空间是有限个函数的集合$F = {f_1, f_2, …, f_d}$时， 对任意一个函数$f\in{F}$，至少以概率$1-\delta$， 以下不等式成立：</p>
+<script type="math/tex; mode=display">R(f) \le \hat{R}(f) + \epsilon{(d, N, \delta)}</script><p>其中，</p>
+<script type="math/tex; mode=display">\epsilon{(d, N, \delta)} = \sqrt{\frac{1}{2N}(logd + log\frac{1}{\delta})}</script><p>不等式左端$R(f)$是泛化误差，右端即为泛化误差上界，右端第一项是训练误差，第二项是N的单调递减函数。</p>
+<h1 id="生成模型与判别模型"><a href="#生成模型与判别模型" class="headerlink" title="生成模型与判别模型"></a>生成模型与判别模型</h1><h2 id="生成模型"><a href="#生成模型" class="headerlink" title="生成模型"></a>生成模型</h2><p>根据数据学习联合概率分布P(X, Y)，然后求出条件概率分布P(Y|X)作为预测模型</p>
+<script type="math/tex; mode=display">P(Y|X) = \frac{P(X,Y)}{P(X)}</script><p>朴素贝叶斯法、隐性马尔科夫模型</p>
+<h2 id="判别模型"><a href="#判别模型" class="headerlink" title="判别模型"></a>判别模型</h2><p>根据数据直接学习决策函数f(X)或者条件概率分布P(Y|X)作为预测模型</p>
+<p>k近邻法、感知机、决策树、逻辑斯蒂回归模型、最大熵模型、支持向量机、提升方法、条件随机场</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/统计学习方法/" rel="tag"># 统计学习方法</a>
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/26/测试日志/" rel="next" title="测试日志">
+                <i class="fa fa-chevron-left"></i> 测试日志
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/27/EM算法及其推广/" rel="prev" title="EM算法及其推广">
+                EM算法及其推广 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">JoshuaW1990</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#统计学习"><span class="nav-number">1.</span> <span class="nav-text">统计学习</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#监督学习"><span class="nav-number">2.</span> <span class="nav-text">监督学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">2.1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空间"><span class="nav-number">2.1.1.</span> <span class="nav-text">空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#联合概率分布"><span class="nav-number">2.1.2.</span> <span class="nav-text">联合概率分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#假设空间"><span class="nav-number">2.1.3.</span> <span class="nav-text">假设空间</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题的形式化"><span class="nav-number">2.2.</span> <span class="nav-text">问题的形式化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#统计学习三要素"><span class="nav-number">3.</span> <span class="nav-text">统计学习三要素</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#策略"><span class="nav-number">3.1.</span> <span class="nav-text">策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数和风险函数"><span class="nav-number">3.1.1.</span> <span class="nav-text">损失函数和风险函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#损失函数"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#风险函数（期望损失）"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">风险函数（期望损失）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#经验风险的矫正"><span class="nav-number">3.1.2.</span> <span class="nav-text">经验风险的矫正</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#经验风险最小化"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">经验风险最小化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#结构风险最小化"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">结构风险最小化</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#模型评估与模型选择"><span class="nav-number">4.</span> <span class="nav-text">模型评估与模型选择</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#训练误差与测试误差"><span class="nav-number">4.1.</span> <span class="nav-text">训练误差与测试误差</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过拟合与模型选择"><span class="nav-number">4.2.</span> <span class="nav-text">过拟合与模型选择</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#正则化与交叉验证"><span class="nav-number">5.</span> <span class="nav-text">正则化与交叉验证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化"><span class="nav-number">5.1.</span> <span class="nav-text">正则化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交叉验证"><span class="nav-number">5.2.</span> <span class="nav-text">交叉验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单交叉验证"><span class="nav-number">5.2.1.</span> <span class="nav-text">简单交叉验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#S折交叉验证"><span class="nav-number">5.2.2.</span> <span class="nav-text">S折交叉验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#留一交叉验证"><span class="nav-number">5.2.3.</span> <span class="nav-text">留一交叉验证</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#泛化能力"><span class="nav-number">6.</span> <span class="nav-text">泛化能力</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#泛化误差"><span class="nav-number">6.1.</span> <span class="nav-text">泛化误差</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泛化误差上界"><span class="nav-number">6.2.</span> <span class="nav-text">泛化误差上界</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#生成模型与判别模型"><span class="nav-number">7.</span> <span class="nav-text">生成模型与判别模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#生成模型"><span class="nav-number">7.1.</span> <span class="nav-text">生成模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判别模型"><span class="nav-number">7.2.</span> <span class="nav-text">判别模型</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JoshuaW1990</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+    
+      <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      TeX: {equationNumbers: { autoNumber: "AMS" }}
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

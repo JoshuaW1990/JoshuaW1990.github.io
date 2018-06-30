@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="条件随机场条件随机场是给定随机变量X，输出随机变量Y的条件随机场，隐马尔科夫模型事实上就是一种线性链条件随机场，因此隐马尔科夫模型中的三个问题在这里同样是讨论的重点。">
+<meta name="keywords" content="统计学习方法,机器学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="条件随机场">
+<meta property="og:url" content="https://joshuaw1990.github.io/2017/12/07/条件随机场/index.html">
+<meta property="og:site_name" content="荒草园子">
+<meta property="og:description" content="条件随机场条件随机场是给定随机变量X，输出随机变量Y的条件随机场，隐马尔科夫模型事实上就是一种线性链条件随机场，因此隐马尔科夫模型中的三个问题在这里同样是讨论的重点。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-06-30T13:46:31.722Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="条件随机场">
+<meta name="twitter:description" content="条件随机场条件随机场是给定随机变量X，输出随机变量Y的条件随机场，隐马尔科夫模型事实上就是一种线性链条件随机场，因此隐马尔科夫模型中的三个问题在这里同样是讨论的重点。">
+
+
+
+
+
+
+  <link rel="canonical" href="https://joshuaw1990.github.io/2017/12/07/条件随机场/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>条件随机场 | 荒草园子</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">荒草园子</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">这里没有酒也没有故事</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-笔记">
+    <a href="/note/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />笔记</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://joshuaw1990.github.io/2017/12/07/条件随机场/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JoshuaW1990">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="荒草园子">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">条件随机场
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-07 11:06:15" itemprop="dateCreated datePublished" datetime="2017-12-07T11:06:15+08:00">2017-12-07</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-06-30 21:46:31" itemprop="dateModified" datetime="2018-06-30T21:46:31+08:00">2018-06-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/读书笔记/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="条件随机场"><a href="#条件随机场" class="headerlink" title="条件随机场"></a>条件随机场</h1><p>条件随机场是给定随机变量X，输出随机变量Y的条件随机场，隐马尔科夫模型事实上就是一种线性链条件随机场，因此隐马尔科夫模型中的三个问题在这里同样是讨论的重点。</p>
+<a id="more"></a>
+<h1 id="概率无向图"><a href="#概率无向图" class="headerlink" title="概率无向图"></a>概率无向图</h1><p>概率无向图模型又称为马尔科夫随机场，是一个由无向图表示的联合概率分布。</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>概率图模型G=(V, E)是由图表示的概率分布，设有联合概率分布$P(Y), Y\in{y}$是一组随机变量，在对应无向图G中，结点$v\in{V}$表示一个随机变量$Y_V$，$Y=(Y_V), v\in{V}$，边$e\in{E}$表示随机变量之间的概率依赖关系。如果联合概率分布$P(Y)$满足成对、局部或全局马尔可夫性，则此联合概率分布称为概率无向图模型或者马尔科夫随机场。</p>
+<h2 id="马尔可夫性"><a href="#马尔可夫性" class="headerlink" title="马尔可夫性"></a>马尔可夫性</h2><ul>
+<li>成对马尔可夫性</li>
+<li>局部马尔可夫性</li>
+<li>全局马尔可夫性</li>
+</ul>
+<h3 id="成对马尔可夫性"><a href="#成对马尔可夫性" class="headerlink" title="成对马尔可夫性"></a>成对马尔可夫性</h3><p>u和v是无向图G中任意两个没有边连接的结点，对应随机变量为$Y_u$和$Y_v$，其他所有结点为O。<br>给定随机变量组$Y_O$的条件下随机变量$Y_u$和$Y_v$是条件独立。</p>
+<script type="math/tex; mode=display">P(Y_u, Y_v | Y_O) = P(Y_u | Y_O)P(Y_v | Y_O)</script><h3 id="局部马尔可夫性"><a href="#局部马尔可夫性" class="headerlink" title="局部马尔可夫性"></a>局部马尔可夫性</h3><p>v是G中任意一个结点，W是与v有边连接的所有结点，O是v，W以外所有的其他结点。<br>给定随机变量组$Y_W$的条件下随机变量$Y_V$与$Y_O$是条件独立的。</p>
+<script type="math/tex; mode=display">P(Y_v, Y_O | Y_W) = P(Y_v | Y_W)P(Y_O | Y_W)</script><h3 id="成对马尔可夫性-1"><a href="#成对马尔可夫性-1" class="headerlink" title="成对马尔可夫性"></a>成对马尔可夫性</h3><p>给定随机变量组$Y_C$条件下随机变量组$Y_A$和$Y_B$是条件独立的</p>
+<script type="math/tex; mode=display">P(Y_A, Y_B | Y_C) = P(Y_A | Y_C)P(Y_B | Y_C)</script><h2 id="因子分解"><a href="#因子分解" class="headerlink" title="因子分解"></a>因子分解</h2><h3 id="团与最大团"><a href="#团与最大团" class="headerlink" title="团与最大团"></a>团与最大团</h3><p>无向图中任何两个节点均有链接的结点子集称为团，若这个团是无向图G中的一个团，且不能从G中再加入任何一个结点，则称它为最大团。</p>
+<h3 id="Hammersley-Clifford定理"><a href="#Hammersley-Clifford定理" class="headerlink" title="Hammersley-Clifford定理"></a>Hammersley-Clifford定理</h3><p>概率无向图模型的联合概率分布P(Y)可以表示如下：</p>
+<script type="math/tex; mode=display">P(Y) = \frac{1}{Z}{\prod_{C}{\Phi_C(Y_C)}}</script><script type="math/tex; mode=display">Z = \sum_Y{\prod_C{\Phi_C(Y_C)}}</script><p>通常</p>
+<script type="math/tex; mode=display">\Phi_C(Y_C) = exp[-E(Y_C)]</script><p>其中，C是无向图G中的所有团构成的集合。</p>
+<h1 id="条件随机场-1"><a href="#条件随机场-1" class="headerlink" title="条件随机场"></a>条件随机场</h1><h2 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h2><p>设X与Y是随机变量，$P(Y|X)$是在给定X条件下Y的条件概率分布。若随机变量Y构成一个由无向图$G=(V,E)$表示的马尔科夫随机场，即</p>
+<script type="math/tex; mode=display">P(Y_v | X, Y_w, w\neq{v}) = P(Y_v | X, Y_w, w~v)</script><p>对任意结点v成立，则称条件概率分布$P(Y|X)$为条件随机场。</p>
+<p><strong>线性链条件随机场</strong><br>设X，Y均为线性链表示的随机变量序列，若在给定随机变量序列X的条件下，随机变量序列Y的条件概率分布$P(Y|X)$构成条件随机场，即满足马尔可夫性</p>
+<script type="math/tex; mode=display">P(Y_i|X,Y_1,...,Y_{i-1},Y_{i+1},...,Y_n)=P(Y_i|X,Y_{i-1},Y_{i+1})</script><p>则称$P(Y|X)$为线性链条件随机场。</p>
+<h2 id="形式"><a href="#形式" class="headerlink" title="形式"></a>形式</h2><h3 id="参数化形式"><a href="#参数化形式" class="headerlink" title="参数化形式"></a>参数化形式</h3><p>设$P(Y|X)$为线性链条件随机场，则在随机变量X取值为x的条件下，随机变量Y取值为y的条件概率有如下形式：</p>
+<script type="math/tex; mode=display">P(y|x)=\frac{1}{Z(x)}{exp(\sum_{i,k}{\lambda_k t_k(y_{i-1},y_i,x,i)} + \sum_{i,l}{\mu_l s_l(y_i,x,i)})}</script><p>其中</p>
+<script type="math/tex; mode=display">Z(x)=\sum_y{exp(\sum_{i,k}{\lambda_k t_k(y_{i-1}, y_i, x, i)} + \sum_{i,l}{\mu_l s_l(y_i,x,i)})}</script><h3 id="简化形式"><a href="#简化形式" class="headerlink" title="简化形式"></a>简化形式</h3><script type="math/tex; mode=display">P_w(y|x) = \frac{exp(w\cdot{F(y,x)})}{Z_w(x)}</script><p>其中，</p>
+<script type="math/tex; mode=display">Z_w(x)=\sum_y{exp(w\cdot{F(y,x)})}</script><h3 id="矩阵形式"><a href="#矩阵形式" class="headerlink" title="矩阵形式"></a>矩阵形式</h3><script type="math/tex; mode=display">P_w(y|x)=\frac{1}{Z_w(x)}\prod_{i=1}^{n+1}{M_i(y_{i-1},y_i|x)}</script><p>其中</p>
+<script type="math/tex; mode=display">Z_w(x)=(M_1(x)M_2(x)...M_{n+1}(x))_{start,stop}</script><h1 id="概率计算问题"><a href="#概率计算问题" class="headerlink" title="概率计算问题"></a>概率计算问题</h1><p>给定条件随机场$P(Y|X)$输入序列x和输出序列y，计算条件概率$P(Y<em>i=y_i|x)$，$P(Y</em>{i-1}=y_{i-1},Y_i=y_i|x)$</p>
+<h2 id="前向-后向算法"><a href="#前向-后向算法" class="headerlink" title="前向-后向算法"></a>前向-后向算法</h2><p>前向向量</p>
+<script type="math/tex; mode=display">
+\alpha_0(y|x) = 
+\begin{cases}
+1, & y=start \\
+0, & otherwise
+\end{cases}</script><p>则递推公式为：</p>
+<script type="math/tex; mode=display">\alpha^T(y_i|x) = \alpha_{i-1}^{T}(y_{i-1}|x)M_i(y_{i-1},y_i|x), i=1,2,...,n+1</script><p>或者</p>
+<script type="math/tex; mode=display">\alpha_i^T(x) = \alpha_{i-1}^T(x)M_i(x)</script><p>后向向量</p>
+<script type="math/tex; mode=display">
+\beta_{n+1}(y_{n+1}|x) =
+\begin{cases}
+1, & y_{n+1} = stop \\
+0, & otherwise
+\end{cases}</script><p>则递推公式为</p>
+<script type="math/tex; mode=display">\beta_i(y_i|x) = M_i(y_i,y_{i+1}|x)\beta_{i-1}(y_{i+1}|x)</script><p>或者</p>
+<script type="math/tex; mode=display">\beta_i(x) = M_{i+1}(x)\beta_{i+1}(x)</script><h2 id="概率计算"><a href="#概率计算" class="headerlink" title="概率计算"></a>概率计算</h2><script type="math/tex; mode=display">P(Y_i=y_i|x) = \frac{\alpha_i^T(y_i|x)\beta_i(y_i|x)}{Z(x)}</script><script type="math/tex; mode=display">P(Y_{i-1}=y_{i-1},Y_i=y_i|x) = \frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{Z(x)}</script><p>其中</p>
+<script type="math/tex; mode=display">Z(x) = \alpha_n^T(x)\cdot{\mathbf{1}}</script><h2 id="期望值的计算"><a href="#期望值的计算" class="headerlink" title="期望值的计算"></a>期望值的计算</h2><p>利用前向-后向向量，可以计算联合分布和条件分布的数学期望<br>特征函数$f_k$关于条件分布$P(Y|X)$的数学期望是</p>
+<script type="math/tex; mode=display">
+\begin{equation}\begin{split}
+E_{P(Y|X)}[f_k] &= \sum_yP(y|x)f_k(y,x)\\
+&= \sum_{i=1}^{n+1}\sum_{y_{i-1}y_i}f_k(y_{i-1},y_i,x,i)\frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1}, y_i|x)\beta_i(y_i|x)}{Z(x)}
+\end{split}\end{equation}</script><p>其中</p>
+<script type="math/tex; mode=display">Z(x) = \alpha_n^T(x)\cdot{\mathbf{1}}</script><p>特征函数$f_k$关于联合分布$P(X，Y)$的数学期望是</p>
+<script type="math/tex; mode=display">
+\begin{equation}\begin{split} 
+E_{P(X,Y)}[f_k] &= \sum_{x,y}P(x,y)\sum_{i=1}^{n+1}f_k(y_{i-1},y_i,x,i)\\
+&= \sum_x\hat{P}(x)\sum_yP(y|x)\sum_{i=1}^{n+1}f_k(y_{i-1},y_i,x,i)\\
+&= \sum_x\hat{P}(x)\sum_{i=1}^{n+1}\sum_{y_{i-1}y_i}f_k(y_{i-1},y_i,x,i)\frac{\alpha_{i-1}^T(y_{i-1}|x)M_i(y_{i-1},y_i|x)\beta_i(y_i|x)}{Z(x)}
+\end{split}\end{equation}</script><p>其中</p>
+<script type="math/tex; mode=display">Z(x) = \alpha_n^T(x)\cdot{\mathbf{1}}</script><h1 id="学习算法"><a href="#学习算法" class="headerlink" title="学习算法"></a>学习算法</h1><h2 id="迭代尺度法"><a href="#迭代尺度法" class="headerlink" title="迭代尺度法"></a>迭代尺度法</h2><p>算法<br>输入：特征函数$t<em>1$, $t_2$,…,$t</em>{K<em>1}$, $s_1$, $s_2$, …, $s</em>{K<em>2}$；经验分布$\hat{P}(X,Y)$<br>输出：参数估计值$\hat w$; 模型$P</em>{\hat w}$</p>
+<ol>
+<li>对所有$k\in {1,2,…,K}$, 取初值$w_k=0$</li>
+<li>对所有$k\in {1,2,…,K}$, 取初值$w_k=0$</li>
+<li>对每一个$k\in {1,2,..K}$:<br>当k=1,2,…,$K_1$时，令$\delta_k$是方程<script type="math/tex; mode=display">\sum_{x,y}\tilde{P}(x)P(y|x)\sum_{i=1}^{n+1}{t_k(y_{i-1},y_i,x,i)}exp(\delta_kT(x,y)) = E_{\tilde{P}[t_k]}</script>的解<br>当$k=K<em>1 + l, l=1,2,…,K_2$时，令$\delta</em>{K_1+l}$是方程<script type="math/tex; mode=display">\sum_{x,y}\hat{P}(x)P(y|x)\sum_{i=1}^{n}{s_l(y_i,x,i)}exp(\delta_{K_1+l}T(x,y)) = E_{\tilde{P}}[s_l]</script>的解<br>更新$w_k$的值: $w_k = w_k + \delta$</li>
+<li>如果不是所有$w_k$都收敛，就重复第二步</li>
+</ol>
+<h2 id="拟牛顿法"><a href="#拟牛顿法" class="headerlink" title="拟牛顿法"></a>拟牛顿法</h2><p>输入：特征函数$f<em>1$, $f_2$, …, $f_n$；经验分布$\tilde{P}(X,Y)$<br>输出：最优参数值$\hat w$，最优模型$P</em>{\hat w}(Y|X)$</p>
+<ol>
+<li>选定初始值$w^{(0)}$，取$B_0$为正定对称矩阵，置k=0</li>
+<li>计算$g_k=g(w^{(k)})$。若$g_k=0$，则停止计算；否则转第三步</li>
+<li>由$B_kp_k=-g_k$求出$p_k$</li>
+<li>一维搜索：求$\lambda_k$使得<script type="math/tex; mode=display">f(w^{(k)} + \lambda_kp_k) = \min_{\lambda \ge 0}f(w_{(k)} + \lambda p_k)</script></li>
+<li>置$w^{(k-1)} = w^{(k)} + \lambda_kp_k$</li>
+<li>计算$g<em>{k-1}=g(w^{(k-1)})$，若$g_k=0$，则停止计算；否则，按下式求出$B</em>{k-1}$:<script type="math/tex; mode=display">B_{k+1} = B_k + \frac{y_ky_k^T}{y_k^T\delta_k} - \frac{B_k\delta_k\delta_k^TB_k}{\delta_k^TB_k\delta_k}</script>其中，<script type="math/tex; mode=display">y_k=g_{k+1} - g_k, \delta_k=w^{(k+1)} - w{(k)}</script></li>
+<li>置k=k+1，转第三步</li>
+</ol>
+<h1 id="预测算法"><a href="#预测算法" class="headerlink" title="预测算法"></a>预测算法</h1><p>维特比算法<br>输入：模型特征向量F(y,x)和权值向量w，观测序列$x=(x_1,x_2,…,x_n)$<br>输出：最优路径$y=(y_1^*,y_2^*,…,y_n^*)$</p>
+<ol>
+<li>初始化<script type="math/tex; mode=display">\delta_1(j)=w\cdot F_1(y_0=start,y_1=j,x), j=1,2,...,m</script></li>
+<li>递推。对i=1,2,…,n<script type="math/tex; mode=display">\delta_i(l)=\max_{1\le{j}\le{m}}\{\delta_{i-1}(j) + w\cdot{F_i}(y_{i-1}=j,y_i=l,x)\}, l=1,2,...,m</script><script type="math/tex; mode=display">\phi_i(l) = arg\,\max_{1\le{j}\le{m}}\{\delta_{i-1}(j) + w\cdot{F_i}(y_{i-1}=j,y_i=l,x)\}, l=1,2,...,m</script></li>
+<li>终止<script type="math/tex; mode=display">\max_y(w\cdot{F(y,x)}) = \max_{1\le{j}\le{m}}\delta_n(j)</script><script type="math/tex; mode=display">y_n^* = arg\,\max{1\le{j}\le{m}}\delta_n(j)</script></li>
+<li>返回路径<script type="math/tex; mode=display">y_i^* = \phi_{i+1}(y_{i+1}^*), i=n-1,n-2,...,1</script>获得最优路径 $ y = (y_1^*, y_2^*, …, y_n^*)$</li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/统计学习方法/" rel="tag"># 统计学习方法</a>
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/01/Kaggle-Titanic/" rel="next" title="Kaggle: Titanic">
+                <i class="fa fa-chevron-left"></i> Kaggle: Titanic
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/09/猫图片识别/" rel="prev" title="猫图片识别">
+                猫图片识别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">JoshuaW1990</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#条件随机场"><span class="nav-number">1.</span> <span class="nav-text">条件随机场</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概率无向图"><span class="nav-number">2.</span> <span class="nav-text">概率无向图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#马尔可夫性"><span class="nav-number">2.2.</span> <span class="nav-text">马尔可夫性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#成对马尔可夫性"><span class="nav-number">2.2.1.</span> <span class="nav-text">成对马尔可夫性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#局部马尔可夫性"><span class="nav-number">2.2.2.</span> <span class="nav-text">局部马尔可夫性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#成对马尔可夫性-1"><span class="nav-number">2.2.3.</span> <span class="nav-text">成对马尔可夫性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#因子分解"><span class="nav-number">2.3.</span> <span class="nav-text">因子分解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#团与最大团"><span class="nav-number">2.3.1.</span> <span class="nav-text">团与最大团</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hammersley-Clifford定理"><span class="nav-number">2.3.2.</span> <span class="nav-text">Hammersley-Clifford定理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#条件随机场-1"><span class="nav-number">3.</span> <span class="nav-text">条件随机场</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义-1"><span class="nav-number">3.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#形式"><span class="nav-number">3.2.</span> <span class="nav-text">形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数化形式"><span class="nav-number">3.2.1.</span> <span class="nav-text">参数化形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简化形式"><span class="nav-number">3.2.2.</span> <span class="nav-text">简化形式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵形式"><span class="nav-number">3.2.3.</span> <span class="nav-text">矩阵形式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#概率计算问题"><span class="nav-number">4.</span> <span class="nav-text">概率计算问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前向-后向算法"><span class="nav-number">4.1.</span> <span class="nav-text">前向-后向算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率计算"><span class="nav-number">4.2.</span> <span class="nav-text">概率计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#期望值的计算"><span class="nav-number">4.3.</span> <span class="nav-text">期望值的计算</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#学习算法"><span class="nav-number">5.</span> <span class="nav-text">学习算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代尺度法"><span class="nav-number">5.1.</span> <span class="nav-text">迭代尺度法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拟牛顿法"><span class="nav-number">5.2.</span> <span class="nav-text">拟牛顿法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#预测算法"><span class="nav-number">6.</span> <span class="nav-text">预测算法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JoshuaW1990</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+    
+      <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      TeX: {equationNumbers: { autoNumber: "AMS" }}
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

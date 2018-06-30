@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最近，因为感觉好久没有写代码，面试的时候表现也不佳，所以打算拿Kaggle练练手，积累一些项目经验。因为Titanic是Kaggle的第一个项目，所以决定从这个开始入手。">
+<meta name="keywords" content="机器学习,Kaggle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kaggle: Titanic">
+<meta property="og:url" content="https://joshuaw1990.github.io/2017/12/01/Kaggle-Titanic/index.html">
+<meta property="og:site_name" content="荒草园子">
+<meta property="og:description" content="最近，因为感觉好久没有写代码，面试的时候表现也不佳，所以打算拿Kaggle练练手，积累一些项目经验。因为Titanic是Kaggle的第一个项目，所以决定从这个开始入手。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-06-30T13:22:42.802Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kaggle: Titanic">
+<meta name="twitter:description" content="最近，因为感觉好久没有写代码，面试的时候表现也不佳，所以打算拿Kaggle练练手，积累一些项目经验。因为Titanic是Kaggle的第一个项目，所以决定从这个开始入手。">
+
+
+
+
+
+
+  <link rel="canonical" href="https://joshuaw1990.github.io/2017/12/01/Kaggle-Titanic/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Kaggle: Titanic | 荒草园子</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">荒草园子</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">这里没有酒也没有故事</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-笔记">
+    <a href="/note/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />笔记</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://joshuaw1990.github.io/2017/12/01/Kaggle-Titanic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JoshuaW1990">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="荒草园子">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Kaggle: Titanic
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-01 23:18:51" itemprop="dateCreated datePublished" datetime="2017-12-01T23:18:51+08:00">2017-12-01</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-06-30 21:22:42" itemprop="dateModified" datetime="2018-06-30T21:22:42+08:00">2018-06-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/代码笔记/" itemprop="url" rel="index"><span itemprop="name">代码笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近，因为感觉好久没有写代码，面试的时候表现也不佳，所以打算拿Kaggle练练手，积累一些项目经验。因为Titanic是Kaggle的第一个项目，所以决定从这个开始入手。</p>
+<a id="more"></a>
+<p>以下是基本流程：</p>
+<ol>
+<li>观察并预处理数据</li>
+<li>建立baseline模型</li>
+<li>根据baseline模型的结果增加新的特征并预处理数据</li>
+<li>建立改进后的模型，并采用不同模型通过投票来决定最后结果</li>
+</ol>
+<h1 id="观察并预处理数据"><a href="#观察并预处理数据" class="headerlink" title="观察并预处理数据"></a>观察并预处理数据</h1><ol>
+<li>观察数据主要包括观察数据的类型，确认是连续型变量还是离散型变量，了解各个特征的数量分布、不同特征与存活率之间的关系，根据观察的结果选择想要采用的特征</li>
+<li>预处理数据主要包括找到缺失值并根据需要进行处理（删除对应record或者进行估计），利用one-hot来将处理离散型变量，对连续型变量则进行scaling来加快模型收敛。</li>
+<li>用同样的方式对test数据集进行预处理</li>
+</ol>
+<h2 id="观察数据"><a href="#观察数据" class="headerlink" title="观察数据"></a>观察数据</h2><p>输入如下命令：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">train.head(<span class="number">5</span>)</span><br><span class="line">train.info()</span><br><span class="line">train.describe()</span><br><span class="line">train.describe(include=[<span class="string">'O'</span>])</span><br></pre></td></tr></table></figure>
+<p>以上命令分别打印出训练数据集的前五行，以及其他相关数据信息包括数据缺失情况、数据类型、数据分布等等。<br>经过观察，可以确认：</p>
+<ol>
+<li>主要的数据缺失集中在Age和Cabin这两个特征</li>
+<li>特征中既有连续变量也有离散变量</li>
+<li>离散变量中有部分变量的频数非常低，比如Cabin、Ticket以及Name，其中最高频数只有7</li>
+</ol>
+<p>根据以上观察，频数非常低的三个离散变量暂时被放弃，以后模型改进再做考虑。</p>
+<p>接下来需要观察各个特征与存活率之间的关系，例如年龄与生存人数之间的关系：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grid = sns.FacetGrid(train, col = <span class="string">'Survived'</span>)</span><br><span class="line">grid.map(plt.hist, <span class="string">'Age'</span>, bins=<span class="number">20</span>)</span><br></pre></td></tr></table></figure>
+<p>其余图片可在具体<a href="https://joshuaw1990.github.io/kaggle-titanic/">notebook</a>中找到。</p>
+<p>从数据和图表中可以明显看出部分特征与存活率之间有明显关系，比如Pclass这个特征，Pclass=1的存活率是最高的，随着船舱等级下降（Pclass数值从1变化到3），存活率也在下降，符合事实（有钱人更有几率存活下来）。再比如Sex这个特征，女性的存活率为74.2%，而男性的存活率仅为18.9%，这一点也符合事实，通过这些观察，可以确认这些特征的确有其实际意义也的确与存活率相关。</p>
+<h2 id="预处理数据"><a href="#预处理数据" class="headerlink" title="预处理数据"></a>预处理数据</h2><p>数据的预处理主要包括三个部分：</p>
+<ol>
+<li>处理缺失数据</li>
+<li>对离散变量进行处理</li>
+<li>对连续变量进行处理</li>
+</ol>
+<h3 id="处理缺失数据"><a href="#处理缺失数据" class="headerlink" title="处理缺失数据"></a>处理缺失数据</h3><p>存在却是数据的主要包括三个特征：‘Age’、’Cabin’以及’Embarked’，其中’Cabin’暂时不作为特征处理，因此可以略过不提。‘Embarked’缺失两个record，本身是离散型变量，因此我用众数来作为这两个缺失值的估计值。’Age’缺失177个record，本身为连续型变量，用随机森林回归模型来估计这些缺失值。<br>‘Embarked’变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># fill the missing value with the mode value</span></span><br><span class="line">mode = train[<span class="string">'Embarked'</span>].mode()</span><br><span class="line">train.loc[train.Embarked.isnull(), <span class="string">'Embarked'</span>] = mode[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<p>‘Age’变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor</span><br><span class="line"></span><br><span class="line"><span class="comment"># Build the random forest regressor to estimate the age</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Estimate_Age</span><span class="params">(df)</span>:</span></span><br><span class="line">    dataset = df[[<span class="string">'Age'</span>, <span class="string">'Pclass'</span>, <span class="string">'SibSp'</span>, <span class="string">'Parch'</span>, <span class="string">'Fare'</span>]]</span><br><span class="line">    </span><br><span class="line">    known_age = dataset[dataset.Age.notnull()].as_matrix()</span><br><span class="line">    unknown_age = dataset[dataset.Age.isnull()].as_matrix()</span><br><span class="line">    </span><br><span class="line">    X = known_age[:, <span class="number">1</span>:]</span><br><span class="line">    y = known_age[:, <span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    regr = RandomForestRegressor(n_estimators = <span class="number">1000</span>, random_state = <span class="number">0</span>)</span><br><span class="line">    regr.fit(X, y)</span><br><span class="line">    </span><br><span class="line">    estimate_age = regr.predict(unknown_age[:, <span class="number">1</span>:])</span><br><span class="line">    train.loc[train.Age.isnull(), <span class="string">'Age'</span>] = estimate_age</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> train, regr</span><br><span class="line">train_set, regr_age = Estimate_Age(train)</span><br></pre></td></tr></table></figure>
+<p>需要同时返回预处理的train数据集和回归模型是因为我们还需要用这个回顾模型去对test数据集进行预处理。</p>
+<h3 id="处理离散变量"><a href="#处理离散变量" class="headerlink" title="处理离散变量"></a>处理离散变量</h3><p>采用one-hot对如下变量进行处理：</p>
+<ol>
+<li>Pclass</li>
+<li>Sex</li>
+<li>Embarked</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Transform_Feature</span><span class="params">(df)</span>:</span></span><br><span class="line">    Pclass_dummies = pd.get_dummies(df[<span class="string">'Pclass'</span>], prefix = <span class="string">'Pclass'</span>)</span><br><span class="line">    Sex_dummies = pd.get_dummies(df[<span class="string">'Sex'</span>], prefix = <span class="string">'Sex'</span>)</span><br><span class="line">    Embarked_dummies = pd.get_dummies(df[<span class="string">'Embarked'</span>], prefix = <span class="string">'Embarked'</span>)</span><br><span class="line"></span><br><span class="line">    df = pd.concat([df, Pclass_dummies, Sex_dummies, Embarked_dummies], axis=<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> df</span><br><span class="line"></span><br><span class="line">train = Transform_Feature(train_set)</span><br></pre></td></tr></table></figure>
+<h3 id="处理连续变量"><a href="#处理连续变量" class="headerlink" title="处理连续变量"></a>处理连续变量</h3><p>对如下连续变量进行scaling：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> sklearn.preprocessing <span class="keyword">as</span> preprocessing</span><br><span class="line">scaler = preprocessing.StandardScaler()</span><br><span class="line">scale_param = scaler.fit(train[[<span class="string">'Age'</span>, <span class="string">'SibSp'</span>, <span class="string">'Parch'</span>, <span class="string">'Fare'</span>]].values)</span><br><span class="line">scaled_features = scaler.fit_transform(train[[<span class="string">'Age'</span>, <span class="string">'SibSp'</span>, <span class="string">'Parch'</span>, <span class="string">'Fare'</span>]].values, scale_param)</span><br><span class="line">train[[<span class="string">'Age_scaled'</span>, <span class="string">'SibSp_scaled'</span>, <span class="string">'Parch_scaled'</span>, <span class="string">'Fare_scaled'</span>]] = pd.DataFrame(scaled_features, index=train.index)</span><br></pre></td></tr></table></figure>
+<p>最后，用同样方法对test数据集进行预处理。</p>
+<h1 id="Baseline模型"><a href="#Baseline模型" class="headerlink" title="Baseline模型"></a>Baseline模型</h1><p>baseline模型使用logistic regression模型，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line">train_data = train[[<span class="string">'Survived'</span>, <span class="string">'Age_scaled'</span>, <span class="string">'SibSp_scaled'</span>, <span class="string">'Parch_scaled'</span>, <span class="string">'Fare_scaled'</span>, <span class="string">'Pclass_1'</span>, <span class="string">'Pclass_2'</span>, <span class="string">'Pclass_3'</span>, <span class="string">'Sex_female'</span>, <span class="string">'Sex_male'</span>, <span class="string">'Embarked_C'</span>, <span class="string">'Embarked_Q'</span>, <span class="string">'Embarked_S'</span>]]</span><br><span class="line">test_data = test[[<span class="string">'Age_scaled'</span>, <span class="string">'SibSp_scaled'</span>, <span class="string">'Parch_scaled'</span>, <span class="string">'Fare_scaled'</span>, <span class="string">'Pclass_1'</span>, <span class="string">'Pclass_2'</span>, <span class="string">'Pclass_3'</span>, <span class="string">'Sex_female'</span>, <span class="string">'Sex_male'</span>, <span class="string">'Embarked_C'</span>, <span class="string">'Embarked_Q'</span>, <span class="string">'Embarked_S'</span>]]</span><br><span class="line"></span><br><span class="line"><span class="comment"># train the model</span></span><br><span class="line">X_train, Y_train = train_data.as_matrix()[:, <span class="number">1</span>:], train_data.as_matrix()[:, <span class="number">0</span>]</span><br><span class="line">X_test = test_data.as_matrix()</span><br><span class="line">clf = LogisticRegression(penalty=<span class="string">'l1'</span>)</span><br><span class="line">clf.fit(X_train, Y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># predict the result of the test set</span></span><br><span class="line">Y_test = clf.predict(X_test)</span><br><span class="line">result = pd.DataFrame(&#123;<span class="string">'PassengerId'</span>: test[<span class="string">'PassengerId'</span>].as_matrix(), <span class="string">'Survived'</span>: Y_test.astype(np.int32)&#125;)</span><br></pre></td></tr></table></figure>
+<p>该模型的预测结果提交Kaggle后，准确率为75.598%。</p>
+<h1 id="分析Baseline模型的预测结果"><a href="#分析Baseline模型的预测结果" class="headerlink" title="分析Baseline模型的预测结果"></a>分析Baseline模型的预测结果</h1><h2 id="观察各个特征的在模型中的系数"><a href="#观察各个特征的在模型中的系数" class="headerlink" title="观察各个特征的在模型中的系数"></a>观察各个特征的在模型中的系数</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pd.DataFrame(&#123;<span class="string">'features'</span>: list(train_data.columns)[<span class="number">1</span>:], <span class="string">'coef'</span>: list(clf.coef_.T)&#125;)</span><br></pre></td></tr></table></figure>
+<p>从结果来看，虽然部分特征的系数略显奇怪，但是基本上每个特征都与生存率有关。比如’Sex_female’的系数为1.787，而’Sex_male’的系数为-0.863，这表明女性会有大概率获救，而男性则大概率遇难。</p>
+<h2 id="观察bad-case"><a href="#观察bad-case" class="headerlink" title="观察bad case"></a>观察bad case</h2><p>将训练集分割成training set和validation set，然后在预测完validation set后，找到其中预测失误的bad case，打印出来观察特征。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># split the data</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line">training_set, validation_set = train_test_split(train, test_size=<span class="number">0.4</span>, random_state=<span class="number">0</span>)</span><br><span class="line">train_data = training_set[[<span class="string">'Survived'</span>, <span class="string">'Age_scaled'</span>, <span class="string">'SibSp_scaled'</span>, <span class="string">'Parch_scaled'</span>, <span class="string">'Fare_scaled'</span>, <span class="string">'Pclass_1'</span>, <span class="string">'Pclass_2'</span>, <span class="string">'Pclass_3'</span>, <span class="string">'Sex_female'</span>, <span class="string">'Sex_male'</span>, <span class="string">'Embarked_C'</span>, <span class="string">'Embarked_Q'</span>, <span class="string">'Embarked_S'</span>]]</span><br><span class="line">validation_data = validation_set[[<span class="string">'Survived'</span>, <span class="string">'Age_scaled'</span>, <span class="string">'SibSp_scaled'</span>, <span class="string">'Parch_scaled'</span>, <span class="string">'Fare_scaled'</span>, <span class="string">'Pclass_1'</span>, <span class="string">'Pclass_2'</span>, <span class="string">'Pclass_3'</span>, <span class="string">'Sex_female'</span>, <span class="string">'Sex_male'</span>, <span class="string">'Embarked_C'</span>, <span class="string">'Embarked_Q'</span>, <span class="string">'Embarked_S'</span>]]</span><br><span class="line"><span class="comment"># train the model and predict the validation set</span></span><br><span class="line">X_train, Y_train = train_data.as_matrix()[:, <span class="number">1</span>:], train_data.as_matrix()[:, <span class="number">0</span>]</span><br><span class="line">X_validation, Y_validation = validation_data.as_matrix()[:, <span class="number">1</span>:], validation_data.as_matrix()[:, <span class="number">0</span>]</span><br><span class="line">clf.fit(X_train, Y_train)</span><br><span class="line">Y_pred = clf.predict(X_validation)</span><br><span class="line">bad_case = validation_set.loc[validation_set.PassengerId.isin(validation_set[Y_pred != validation_data.as_matrix()[:, <span class="number">0</span>]][<span class="string">'PassengerId'</span>].values)]</span><br><span class="line">bad_case.head(<span class="number">10</span>)</span><br><span class="line">bad_case.describe()</span><br></pre></td></tr></table></figure>
+<p>（这份bad case我毛都没看出来= =）</p>
+<h2 id="添加新的特征"><a href="#添加新的特征" class="headerlink" title="添加新的特征"></a>添加新的特征</h2><p>参考了一些别人的思路，我决定加上一下特征：</p>
+<ul>
+<li>Title</li>
+<li>Family Szie</li>
+<li>IsAlone</li>
+<li>AgeBand</li>
+</ul>
+<p>第一项可以在Name中找到，Title在一定程度上反映了社会地位以及性别、年龄，因此有一定的价值，第二项的话是因为SibSp和Parch都与存活率相关，那么两者的结合，理论上也应该相关，而且在这种灾难面前，理论上每个人都会以家族为单位尽可能展开自救或救人。第三项的原因与第二项相同，可以算是第二项的一个特例吧。第四项是对年龄进行离散化，因为实际上幼年和老年获救的概率理论上都应该比壮年高，因此离散化到几个区间可能会更好的预测结果。</p>
+<p>以下是相关代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Title</span></span><br><span class="line">train[<span class="string">'Title'</span>] = train_set.Name.str.extract(<span class="string">' ([A-Za-z]+)\.'</span>, expand=<span class="keyword">False</span>)</span><br><span class="line">pd.crosstab(train[<span class="string">'Title'</span>], train[<span class="string">'Survived'</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict</span><br><span class="line">train[<span class="string">'Title'</span>] = train[<span class="string">'Title'</span>].replace(<span class="string">'Mlle'</span>, <span class="string">'Miss'</span>)</span><br><span class="line">train[<span class="string">'Title'</span>] = train[<span class="string">'Title'</span>].replace(<span class="string">'Ms'</span>, <span class="string">'Miss'</span>)</span><br><span class="line">train[<span class="string">'Title'</span>] = train[<span class="string">'Title'</span>].replace(<span class="string">'Mme'</span>, <span class="string">'Miss'</span>)</span><br><span class="line"></span><br><span class="line">tmpDict = &#123;<span class="string">'Mr'</span>: <span class="number">1</span>, <span class="string">'Miss'</span>: <span class="number">2</span>, <span class="string">'Mrs'</span>: <span class="number">3</span>, <span class="string">'Master'</span>: <span class="number">4</span>&#125;</span><br><span class="line">TitleDict = defaultdict(<span class="keyword">lambda</span>: <span class="number">5</span>, tmpDict)</span><br><span class="line">train[<span class="string">'Title'</span>] = train[<span class="string">'Title'</span>].map(TitleDict)</span><br><span class="line">train[<span class="string">'Title'</span>] = train[<span class="string">'Title'</span>].fillna(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># FamilySize</span></span><br><span class="line">train[<span class="string">'FamilySize'</span>] = train[<span class="string">'SibSp'</span>] + train[<span class="string">'Parch'</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># IsAlone</span></span><br><span class="line">train[<span class="string">'IsAlone'</span>] = (train[<span class="string">'FamilySize'</span>] == <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># AgeBand</span></span><br><span class="line">train[<span class="string">'AgeBand'</span>] = pd.cut(train[<span class="string">'Age'</span>], <span class="number">5</span>, labels=[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br></pre></td></tr></table></figure>
+<p>在添加完这几新的feature之后同样要进行数据的预处理，此处掠过不提（具体代码在<a href="https://joshuaw1990.github.io/kaggle-titanic/">这里</a>）。</p>
+<h1 id="使用改进后的模型进行预测"><a href="#使用改进后的模型进行预测" class="headerlink" title="使用改进后的模型进行预测"></a>使用改进后的模型进行预测</h1><p>此处使用的模型包括以下几种：</p>
+<ul>
+<li>Logistic Regression</li>
+<li>Random Forest</li>
+<li>Knn</li>
+<li>SVM</li>
+<li>Decision Tree</li>
+</ul>
+<p>这几个模型的训练与预测过程与之前相同，此外需要作出learning curve，以防止有模型过拟合。<br>以logistic regression的代码为例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># build the dataset from the complete dataset</span></span><br><span class="line">train_data = train.filter(regex=<span class="string">'Survived|Age_.*|SibSp_.*|Parch_.*|Fare_.*|FamilySize_.*|Pclass_.*|Embarked_.*|Sex_.*|Title_.*|IsAlone_.*|AgeBand_.*'</span>)</span><br><span class="line">test_data = test.filter(regex=<span class="string">'Age_.*|SibSp_.*|Parch_.*|Fare_.*|FamilySize_.*|Pclass_.*|Embarked_.*|Sex_.*|Title_.*|IsAlone_.*|AgeBand_.*'</span>)</span><br><span class="line">X_train, Y_train = train_data.as_matrix()[:, <span class="number">1</span>:], train_data.as_matrix()[:, <span class="number">0</span>]</span><br><span class="line">X_test = test_data.as_matrix()</span><br><span class="line"></span><br><span class="line"><span class="comment"># train the model</span></span><br><span class="line">clf = LogisticRegression(penalty=<span class="string">'l1'</span>)</span><br><span class="line">clf.fit(X_train, Y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># predict the result of the test set</span></span><br><span class="line">Y_test = clf.predict(X_test)</span><br><span class="line">result = pd.DataFrame(&#123;<span class="string">'PassengerId'</span>: test[<span class="string">'PassengerId'</span>].as_matrix(), <span class="string">'Survived'</span>: Y_test.astype(np.int32)&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Learning curve</span></span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> learning_curve</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_learning_curve</span><span class="params">(estimator, X, y, train_sizes)</span>:</span></span><br><span class="line">    train_sizes, train_scores, validation_scores = learning_curve(estimator, X, y, train_sizes=train_sizes)</span><br><span class="line">    train_scores_mean = np.mean(train_scores, axis=<span class="number">1</span>)</span><br><span class="line">    train_scores_std = np.std(train_scores, axis=<span class="number">1</span>)</span><br><span class="line">    validation_scores_mean = np.mean(validation_scores, axis=<span class="number">1</span>)</span><br><span class="line">    validation_scores_std = np.std(validation_scores, axis=<span class="number">1</span>)</span><br><span class="line">    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,</span><br><span class="line">                     train_scores_mean + train_scores_std, alpha=<span class="number">0.1</span>,</span><br><span class="line">                     color=<span class="string">"r"</span>)</span><br><span class="line">    plt.fill_between(train_sizes, validation_scores_mean - validation_scores_std,</span><br><span class="line">                     validation_scores_mean + validation_scores_std, alpha=<span class="number">0.1</span>, color=<span class="string">"g"</span>)</span><br><span class="line">    plt.plot(train_sizes, train_scores_mean, <span class="string">'o-'</span>, color=<span class="string">"r"</span>,</span><br><span class="line">             label=<span class="string">"Training score"</span>)</span><br><span class="line">    plt.plot(train_sizes, validation_scores_mean, <span class="string">'o-'</span>, color=<span class="string">"g"</span>,</span><br><span class="line">             label=<span class="string">"Cross-validation score"</span>)</span><br><span class="line"></span><br><span class="line">    plt.legend(loc=<span class="string">"best"</span>)</span><br><span class="line">    <span class="keyword">return</span> train_sizes, train_scores, validation_scores</span><br><span class="line">	</span><br><span class="line">train_sizes, train_scores, validation_scores = plot_learning_curve(LogisticRegression(penalty=<span class="string">'l1'</span>), X_train, Y_train, np.linspace(<span class="number">.05</span>, <span class="number">1.</span>, <span class="number">20</span>))</span><br></pre></td></tr></table></figure>
+<p><a href="https://joshuaw1990.github.io/kaggle-titanic/">这里</a>可以看到其他几个模型各自的learning curve，从这些learning curve，可以看出random forest和decision tree都存在过拟合的问题， 而knn、logistic regression以及knn的learning curve相对理想，</p>
+<p>所以我们用knn、logistic regression以及svm来组成一个投票的模型，三个模型各自独立预测，然后根据预测结果，共同决定结果。代码如下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lr model</span></span><br><span class="line">lr_clf = LogisticRegression(penalty=<span class="string">'l1'</span>)</span><br><span class="line">lr_clf.fit(X_train, Y_train)</span><br><span class="line">Y_test = lr_clf.predict(X_test)</span><br><span class="line">lr_result = pd.DataFrame(&#123;<span class="string">'PassengerId'</span>: test[<span class="string">'PassengerId'</span>].as_matrix(), <span class="string">'Survived'</span>: Y_test.astype(np.int32)&#125;)</span><br><span class="line"><span class="comment"># knn model</span></span><br><span class="line">knn_clf = KNeighborsClassifier(n_neighbors=<span class="number">5</span>)</span><br><span class="line">knn_clf.fit(X_train, Y_train)</span><br><span class="line">Y_test = knn_clf.predict(X_test)</span><br><span class="line">knn_result = pd.DataFrame(&#123;<span class="string">'PassengerId'</span>: test[<span class="string">'PassengerId'</span>].as_matrix(), <span class="string">'Survived'</span>: Y_test.astype(np.int32)&#125;)</span><br><span class="line"><span class="comment"># svm model</span></span><br><span class="line">svm_clf = svm.SVC()</span><br><span class="line">svm_clf.fit(X_train, Y_train)</span><br><span class="line">Y_test = svm_clf.predict(X_test)</span><br><span class="line">svm_result = pd.DataFrame(&#123;<span class="string">'PassengerId'</span>: test[<span class="string">'PassengerId'</span>].as_matrix(), <span class="string">'Survived'</span>: Y_test.astype(np.int32)&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># voting predict</span></span><br><span class="line">result = pd.DataFrame(&#123;<span class="string">'PassengerId'</span>: test[<span class="string">'PassengerId'</span>].as_matrix()&#125;)</span><br><span class="line">result[<span class="string">'Survived_Vote'</span>] = lr_result[<span class="string">'Survived'</span>] + knn_result[<span class="string">'Survived'</span>] + svm_result[<span class="string">'Survived'</span>] + rf_result[<span class="string">'Survived'</span>] + dt_result[<span class="string">'Survived'</span>]</span><br><span class="line">result[<span class="string">'Survived'</span>] = result[<span class="string">'Survived_Vote'</span>].apply(<span class="keyword">lambda</span> x: <span class="number">1</span> <span class="keyword">if</span> x &gt; <span class="number">2</span> <span class="keyword">else</span> <span class="number">0</span>)</span><br><span class="line">result.drop([<span class="string">'Survived_Vote'</span>], inplace=<span class="keyword">True</span>, axis=<span class="number">1</span>)</span><br><span class="line">result.to_csv(<span class="string">"../input/voting.csv"</span>, index=<span class="keyword">False</span>)</span><br></pre></td></tr></table></figure></p>
+<p>预测结果为78.47%，比之前的baseline模型要好。</p>
+<p>但是值得注意的是，svm模型独立的预测结果准确率为78.95%，也就是说svm的准确率甚至更高，而且svm的learning curve也非常理想。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>暂时就先做到这里了，以后有空再往里面加点东西，做点修改吧，这个模型的预测准确率并不高，只有78%左右，究其原因的话，可能在特征工程那一步还是做得有点草率，根据其他一些人的分析和我自己事后的一些思考，有一部分被我丢弃的特征事实上是有非常重要的意义的，比如：</p>
+<ul>
+<li>Name的长度，虽然并不清楚原因，但是Name的长度与存活率似乎正相关</li>
+<li>Cabin的有无，有无Cabin也严重影响存活率，可以理解为是只有活下来的人，才能准确记录自己的Cabin吧</li>
+<li>Fare可以类似于Age做一个离散化</li>
+<li>按照Name中的姓氏做一个家族的分类，作为一个新的特征，因为同一个家族应该存活率接近</li>
+</ul>
+<p>这个项目的完整ipython notebook已被我传到github上，网页版也可以在<a href="https://joshuaw1990.github.io/kaggle-titanic/">这里</a>找到。</p>
+<p>参考文献：<br><a href="http://blog.csdn.net/han_xiaoyang/article/details/49797143" target="_blank" rel="noopener">机器学习系列(3)_逻辑回归应用之Kaggle泰坦尼克之灾</a><br><a href="https://www.kaggle.com/startupsci/titanic-data-science-solutions?scriptVersionId=1145136" target="_blank" rel="noopener">Titanic Data Science Solutions</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+            <a href="/tags/Kaggle/" rel="tag"># Kaggle</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/01/隐马尔科夫模型/" rel="next" title="隐马尔科夫模型">
+                <i class="fa fa-chevron-left"></i> 隐马尔科夫模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/07/条件随机场/" rel="prev" title="条件随机场">
+                条件随机场 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">JoshuaW1990</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#观察并预处理数据"><span class="nav-number">1.</span> <span class="nav-text">观察并预处理数据</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#观察数据"><span class="nav-number">1.1.</span> <span class="nav-text">观察数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预处理数据"><span class="nav-number">1.2.</span> <span class="nav-text">预处理数据</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#处理缺失数据"><span class="nav-number">1.2.1.</span> <span class="nav-text">处理缺失数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理离散变量"><span class="nav-number">1.2.2.</span> <span class="nav-text">处理离散变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理连续变量"><span class="nav-number">1.2.3.</span> <span class="nav-text">处理连续变量</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Baseline模型"><span class="nav-number">2.</span> <span class="nav-text">Baseline模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析Baseline模型的预测结果"><span class="nav-number">3.</span> <span class="nav-text">分析Baseline模型的预测结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#观察各个特征的在模型中的系数"><span class="nav-number">3.1.</span> <span class="nav-text">观察各个特征的在模型中的系数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#观察bad-case"><span class="nav-number">3.2.</span> <span class="nav-text">观察bad case</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#添加新的特征"><span class="nav-number">3.3.</span> <span class="nav-text">添加新的特征</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#使用改进后的模型进行预测"><span class="nav-number">4.</span> <span class="nav-text">使用改进后的模型进行预测</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JoshuaW1990</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+    
+      <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      TeX: {equationNumbers: { autoNumber: "AMS" }}
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

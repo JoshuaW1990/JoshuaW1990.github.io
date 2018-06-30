@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="这是一个实验楼上的简单实例项目，要求使用opencv识别图片中是否有猫的存在。基本步骤和代码都是来自实验楼，ipython notebook可以在这里查看。">
+<meta name="keywords" content="机器学习,opencv,svm,sklearn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="猫图片识别">
+<meta property="og:url" content="https://joshuaw1990.github.io/2017/12/09/猫图片识别/index.html">
+<meta property="og:site_name" content="荒草园子">
+<meta property="og:description" content="这是一个实验楼上的简单实例项目，要求使用opencv识别图片中是否有猫的存在。基本步骤和代码都是来自实验楼，ipython notebook可以在这里查看。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://p011cf7xt.bkt.clouddn.com/hog1.jpeg">
+<meta property="og:image" content="http://p011cf7xt.bkt.clouddn.com/hog2.jpeg">
+<meta property="og:image" content="http://p011cf7xt.bkt.clouddn.com/hog3.gif">
+<meta property="og:updated_time" content="2018-06-30T13:33:36.109Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="猫图片识别">
+<meta name="twitter:description" content="这是一个实验楼上的简单实例项目，要求使用opencv识别图片中是否有猫的存在。基本步骤和代码都是来自实验楼，ipython notebook可以在这里查看。">
+<meta name="twitter:image" content="http://p011cf7xt.bkt.clouddn.com/hog1.jpeg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://joshuaw1990.github.io/2017/12/09/猫图片识别/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>猫图片识别 | 荒草园子</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">荒草园子</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">这里没有酒也没有故事</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+    <a href="/about/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+    <a href="/tags/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+    <a href="/categories/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-笔记">
+    <a href="/note/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />笔记</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://joshuaw1990.github.io/2017/12/09/猫图片识别/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="JoshuaW1990">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="荒草园子">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">猫图片识别
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-09 15:42:59" itemprop="dateCreated datePublished" datetime="2017-12-09T15:42:59+08:00">2017-12-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-06-30 21:33:36" itemprop="dateModified" datetime="2018-06-30T21:33:36+08:00">2018-06-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/代码笔记/" itemprop="url" rel="index"><span itemprop="name">代码笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这是一个实验楼上的简单实例项目，要求使用opencv识别图片中是否有猫的存在。<br>基本步骤和代码都是来自实验楼，ipython notebook可以在<a href="https://joshuaw1990.github.io/svm_cat_recog/">这里</a>查看。</p>
+<a id="more"></a>
+<h1 id="方向梯度直方图-HOG"><a href="#方向梯度直方图-HOG" class="headerlink" title="方向梯度直方图(HOG)"></a>方向梯度直方图(HOG)</h1><p>这部分原文来自<a href="https://www.leiphone.com/news/201708/ZKsGd2JRKr766wEd.html" target="_blank" rel="noopener">这里</a>，此处笔者做了删减，如需详细了解，请查看原文。</p>
+<h2 id="什么是方向梯度直方图"><a href="#什么是方向梯度直方图" class="headerlink" title="什么是方向梯度直方图"></a>什么是方向梯度直方图</h2><p>在通过机器学习进行图像处理时，我们需要确定什么是有用信息，什么是不相关信息，当我们抽取了有用信息并移除不相关信息之后，我们就得到了特征描述子，并可以用于表示图像。具体到图像识别中，一般而言，边缘信息是有用信息，而颜色信息就是无用信息，因此，我们可以用边缘检测将图像转化成只有边缘的图像，这种特征描述子就是方向梯度直方图（HOG）。</p>
+<p>在HOG中，梯度的方向分布被作为特征使用，主要沿图片的水平轴和垂直轴表示其梯度，在图形的边缘区域，这种梯度变化会比较大，因此可以包含图形的形状信息。</p>
+<h2 id="方向梯度直方图的计算方法"><a href="#方向梯度直方图的计算方法" class="headerlink" title="方向梯度直方图的计算方法"></a>方向梯度直方图的计算方法</h2><p>具体到计算中，我们首先需要明确的是，因为我们需要一个像素一个像素的研究每一个像素点的方向梯度，因此，首先将图片分割成一个一个小图片来进行计算和预处理会比较方便。为了方便起见，我们将分割后的小图片称为patch。</p>
+<p>第一步，预处理</p>
+<p>图片的尺寸是可以任意的，但是为了统一起见，其宽高比必须固定，比如统一规定为1:2，我们需要对图片进行切割和放大或缩小来是其大小复合比例需要。</p>
+<p>第二部，计算梯度图像</p>
+<p>计算梯度图像主要包括两个部分：</p>
+<ol>
+<li>使用一些kernel比如Sobel算子（OpenCV）中提供Sobel算子函数，来计算X轴和Y轴的梯度</li>
+<li>根据计算得到的两个梯度，来计算梯度的幅值g和方向$\theta$<script type="math/tex; mode=display">g = \sqrt{g_x^2 + g_y^2}</script><script type="math/tex; mode=display">\theta = acrtan\frac{g_y}{g_x}</script></li>
+</ol>
+<p>使用Python的代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算第一步的两个梯度值</span></span><br><span class="line">im = cv2.imread(<span class="string">'picName.png'</span>)</span><br><span class="line">im = np.float32(im)</span><br><span class="line"></span><br><span class="line">gx = cv2.Sobel(img, cv2.CV_32F, <span class="number">1</span>, <span class="number">0</span>, ksize=<span class="number">1</span>)</span><br><span class="line">gy = cv2.Sobel(img, cv2.CV_32F, <span class="number">0</span>, <span class="number">1</span>, ksize=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算幅值和方向</span></span><br><span class="line">mag, angle = cv2.cartToPolar(gx, gy, angleInDegree=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<p>通过这些处理， 我们得到的梯度可以忽略掉很多不必要的信息，而加重轮廓，使我们更容易发现物体形状。</p>
+<p>第三步，在8*8的网格中计算梯度直方图</p>
+<p>在这里，我们假定分割后每次处理的图片含有8*8=64个像素点，则每个像素点都肯定存在一个幅值和方向那么，我们就有了两个对应的幅值矩阵和方向矩阵并与原图形上的像素点一一对应。我们接下来需要做的就是将幅值矩阵里面的元素按照方向角度将其分配到由9个bin构成的直方图中，比如，角度为20度的对应幅值应该属于20度所在的bin，将其幅值加到对应的直方图中，如果角度值并不恰好等于bin的度数，则按照比例进行线性分割，具体示例如下图</p>
+<p><img src="http://p011cf7xt.bkt.clouddn.com/hog1.jpeg" alt=""></p>
+<p>而之所以采用直方图来表示图像特征的原因则是其优越的抗噪效果。处理完这一步后，对于一个特定的图片分割部分，我们应该可以获得一个直方图如下：</p>
+<p><img src="http://p011cf7xt.bkt.clouddn.com/hog2.jpeg" alt=""></p>
+<p>第四步，16*16归一化</p>
+<p>理论上，第三步得到的直方图已经可以用于描述图片的关键特征了，但是，我们也必须考虑到一个重要的影响因素—光照，在强光条件和弱光条件下，hog里面的幅值是不一样的，所以我们需要通过归一化的方式，消除光照的影响。</p>
+<p>一个比较好的归一化方式是一次将几个分割后的图片部分各自的直方图组合在一起进行归一化，如下图</p>
+<p><img src="http://p011cf7xt.bkt.clouddn.com/hog3.gif" alt=""></p>
+<p>通过这种方式，我们一次归一化一个蓝色框中的所有直方图。</p>
+<p>第五步，计算HOG特征向量</p>
+<p>经过这几步，我们理论上已经得到了我们想要的HOG特征向量，接下来我们只需要将这些特征向量组合在一起，组成一个一维的由所有直方图一起构成的向量即可。</p>
+<h1 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h1><p>这一段内容包括代码主要参考自<a href="https://www.shiyanlou.com/courses/794" target="_blank" rel="noopener">这里</a>。</p>
+<h2 id="定义HOG函数"><a href="#定义HOG函数" class="headerlink" title="定义HOG函数"></a>定义HOG函数</h2><p>取决于读者使用的library，例如skimage中已经自带HOG函数，因此读者不需要自己来写这个函数</p>
+<p>具体函数如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hog</span><span class="params">(img)</span>:</span></span><br><span class="line">    x_pixel, y_pixel = <span class="number">194</span>, <span class="number">259</span></span><br><span class="line">    gx = cv2.Sobel(img, cv2.CV_32F, <span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">    gy = cv2.Sobel(img, cv2.CV_32F, <span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">    mag, ang = cv2.cartToPolar(gx, gy)</span><br><span class="line">    bins = np.int32(bin_n*ang/(<span class="number">2</span>*np.pi))</span><br><span class="line">    bin_cells = bins[:x_pixel/<span class="number">2</span>, :y_pixel/<span class="number">2</span>], bins[x_pixel/<span class="number">2</span>:, :y_pixel/<span class="number">2</span>], bins[:x_pixel/<span class="number">2</span>, y_pixel/<span class="number">2</span>:], bins[x_pixel/<span class="number">2</span>:, y_pixel/<span class="number">2</span>:]</span><br><span class="line">    mag_cells = mag[:x_pixel/<span class="number">2</span>,:y_pixel/<span class="number">2</span>], mag[x_pixel/<span class="number">2</span>:,:y_pixel/<span class="number">2</span>], mag[:x_pixel/<span class="number">2</span>,y_pixel/<span class="number">2</span>:], mag[x_pixel/<span class="number">2</span>:,y_pixel/<span class="number">2</span>:]</span><br><span class="line">    hists = [np.bincount(b.ravel(), m.ravel(), bin_n) <span class="keyword">for</span> b, m <span class="keyword">in</span> zip(bin_cells, mag_cells)]</span><br><span class="line">    hist = np.hstack(hists)</span><br><span class="line">    <span class="keyword">return</span> hist</span><br></pre></td></tr></table></figure>
+<p>注意这里我们调用了<code>cv2。Sobel</code>以及<code>cv2.cartToPolar</code>两个函数。</p>
+<p>如果使用<code>skimage</code>，那么调用代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> skimage <span class="keyword">import</span> feature <span class="keyword">as</span> ft</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">myHog</span><span class="params">(img)</span>:</span></span><br><span class="line">    feature = ft.hog(img, orientations=<span class="number">8</span>, pixels_per_cell=(<span class="number">16</span>,<span class="number">16</span>), cells_per_block=(<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">    <span class="keyword">return</span> feature</span><br></pre></td></tr></table></figure>
+<h2 id="预处理图片"><a href="#预处理图片" class="headerlink" title="预处理图片"></a>预处理图片</h2><p>此处由于给定的图片已经是大小比例裁剪适当的，因此我们不需要对图片本身进行处理，只需要将图片读入到数据集中。</p>
+<p>我们需要将图片分别读入到代表训练集和测试集的两个list中去。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">img = []</span><br><span class="line"><span class="comment"># positive</span></span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> os.listdir(os.getcwd() + <span class="string">'/cat/'</span>):</span><br><span class="line">    pic = cv2.imread(os.getcwd() + <span class="string">'/cat/'</span> + name, <span class="number">0</span>)</span><br><span class="line">    img.append(pic)</span><br><span class="line">positive = len(img)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"positive samples: &#123;&#125;"</span>.format(positive)</span><br><span class="line"></span><br><span class="line"><span class="comment"># negative</span></span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> os.listdir(os.getcwd() + <span class="string">'/other/'</span>):</span><br><span class="line">    pic = cv2.imread(os.getcwd() + <span class="string">'/other/'</span> + name, <span class="number">0</span>)</span><br><span class="line">    img.append(pic)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"negative samples: &#123;&#125;"</span>.format(len(img) - positive)</span><br><span class="line"></span><br><span class="line"><span class="comment"># predict</span></span><br><span class="line">predict_img = []</span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> os.listdir(os.getcwd() + <span class="string">'/predict/'</span>):</span><br><span class="line">    pic = cv2.imread(os.getcwd() + <span class="string">'/predict/'</span> + name, <span class="number">0</span>)</span><br><span class="line">    predict_img.append(pic)</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"prediction samples: &#123;&#125;"</span>.format(len(predict_img))</span><br></pre></td></tr></table></figure>
+<h2 id="预处理数据"><a href="#预处理数据" class="headerlink" title="预处理数据"></a>预处理数据</h2><p>将图片读入后，我们就要调用我们自己写的或者其他库中自带的hog函数来预处理每一张图片。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练集</span></span><br><span class="line">HOG_feature = map(myHog, img)</span><br><span class="line">vector = np.asarray(HOG_feature)</span><br><span class="line"><span class="comment"># 给训练集标上label</span></span><br><span class="line">label = np.array(np.repeat(<span class="number">1</span>, vector.shape[<span class="number">0</span>]))</span><br><span class="line">label[positive:] = <span class="number">0</span></span><br><span class="line"><span class="comment"># 测试集</span></span><br><span class="line">predict_feature = map(myHog, predict_img)</span><br><span class="line">predict_vector = np.asarray(predict_feature)</span><br></pre></td></tr></table></figure>
+<h2 id="训练与预测"><a href="#训练与预测" class="headerlink" title="训练与预测"></a>训练与预测</h2><p>OpenCV中自带了SVM，所以我们可以使用其自带的SVM，也可以使用其他库比如sklearn中的SVM。</p>
+<p>OpenCV的相关代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">svm_params = dict(kernel_type = cv2.SVM_LINEAR, svm_type = cv2.SVM_C_SVC, C = <span class="number">2.67</span>, gamma = <span class="number">5.383</span>)</span><br><span class="line">svm = cv2.SVM()</span><br><span class="line">svm.train(trainData, responses, params=svm_params)</span><br><span class="line">result = svm.predict(testData)</span><br></pre></td></tr></table></figure></p>
+<p>使用sklearn的相关代码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">clf = SVC(kernel=<span class="string">'linear'</span>, C=<span class="number">2.67</span>, gamma=<span class="number">5.383</span>)</span><br><span class="line">clf.fit(vector, label)</span><br><span class="line">predict_label = clf.predict(predict_vector)</span><br></pre></td></tr></table></figure></p>
+<p>注意，此处的参数是直接给出的，在实际操作中，我们通常需要进行调参。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>总的来说，整体内容并不多，因为数据量小、没有调参过程等等，只适合于对OpenCV和HOG并不了解的初学者练习尝试。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+            <a href="/tags/opencv/" rel="tag"># opencv</a>
+          
+            <a href="/tags/svm/" rel="tag"># svm</a>
+          
+            <a href="/tags/sklearn/" rel="tag"># sklearn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/07/条件随机场/" rel="next" title="条件随机场">
+                <i class="fa fa-chevron-left"></i> 条件随机场
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/12/SVM公式推导/" rel="prev" title="SVM公式推导">
+                SVM公式推导 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">JoshuaW1990</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#方向梯度直方图-HOG"><span class="nav-number">1.</span> <span class="nav-text">方向梯度直方图(HOG)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是方向梯度直方图"><span class="nav-number">1.1.</span> <span class="nav-text">什么是方向梯度直方图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方向梯度直方图的计算方法"><span class="nav-number">1.2.</span> <span class="nav-text">方向梯度直方图的计算方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码结构"><span class="nav-number">2.</span> <span class="nav-text">代码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义HOG函数"><span class="nav-number">2.1.</span> <span class="nav-text">定义HOG函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预处理图片"><span class="nav-number">2.2.</span> <span class="nav-text">预处理图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预处理数据"><span class="nav-number">2.3.</span> <span class="nav-text">预处理数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练与预测"><span class="nav-number">2.4.</span> <span class="nav-text">训练与预测</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">JoshuaW1990</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+    
+      <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      TeX: {equationNumbers: { autoNumber: "AMS" }}
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
