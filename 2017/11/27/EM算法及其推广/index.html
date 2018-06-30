@@ -112,7 +112,7 @@
 <meta name="keywords" content="统计学习方法,机器学习">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EM算法及其推广">
-<meta property="og:url" content="https://joshuaw1990.github.io/2017/11/27/cjj1jkf290000xvfr0qr62nu7/index.html">
+<meta property="og:url" content="https://joshuaw1990.github.io/2017/11/27/EM算法及其推广/index.html">
 <meta property="og:site_name" content="荒草园子">
 <meta property="og:description" content="EM算法的引入在概率模型中，有时既有观测变量，也有潜在变量，例如在文本挖掘中，具体的字词是观测变量，但是具体的字词背后的词性却是潜在变量。当潜在变量存在的时候，极大似然估计法或者贝叶斯估计模型参数就不能直接使用了，因此有必要使用EM算法。换句话说，EM算法是含有潜在变量的概率模型参数的极大似然估计或者极大后验概率估计。书中仅讨论了极大似然估计。">
 <meta property="og:locale" content="zh-CN">
@@ -126,7 +126,7 @@
 
 
 
-  <link rel="canonical" href="https://joshuaw1990.github.io/2017/11/27/cjj1jkf290000xvfr0qr62nu7/"/>
+  <link rel="canonical" href="https://joshuaw1990.github.io/2017/11/27/EM算法及其推广/"/>
 
 
 
@@ -317,7 +317,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://joshuaw1990.github.io/2017/11/27/cjj1jkf290000xvfr0qr62nu7/">
+    <link itemprop="mainEntityOfPage" href="https://joshuaw1990.github.io/2017/11/27/EM算法及其推广/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="JoshuaW1990">
@@ -408,8 +408,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/11/27/cjj1jkf290000xvfr0qr62nu7/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2017/11/27/cjj1jkf290000xvfr0qr62nu7/" itemprop="commentsCount"></span>
+                <a href="/2017/11/27/EM算法及其推广/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count gitment-comments-count" data-xid="/2017/11/27/EM算法及其推广/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -490,7 +490,7 @@ Q(\theta, \theta^{(i)}) &= E_{Z}[logP(Y,Z|\theta)|Y,\theta^{(i)}]\\
     <strong>本文作者： </strong>JoshuaW1990</li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://joshuaw1990.github.io/2017/11/27/cjj1jkf290000xvfr0qr62nu7/" title="EM算法及其推广">https://joshuaw1990.github.io/2017/11/27/cjj1jkf290000xvfr0qr62nu7/</a>
+    <a href="https://joshuaw1990.github.io/2017/11/27/EM算法及其推广/" title="EM算法及其推广">https://joshuaw1990.github.io/2017/11/27/EM算法及其推广/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明出处！</li>
@@ -518,7 +518,7 @@ Q(\theta, \theta^{(i)}) &= E_{Z}[logP(Y,Z|\theta)|Y,\theta^{(i)}]\\
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/11/27/cjj1jkf32000ixvfrsxvjusmf/" rel="next" title="统计学习方法概论">
+              <a href="/2017/11/27/统计学习方法概论/" rel="next" title="统计学习方法概论">
                 <i class="fa fa-chevron-left"></i> 统计学习方法概论
               </a>
             
@@ -528,7 +528,7 @@ Q(\theta, \theta^{(i)}) &= E_{Z}[logP(Y,Z|\theta)|Y,\theta^{(i)}]\\
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/11/27/cjj1jkf47001rxvfrxfi4ctce/" rel="prev" title="Hexo+Github搭建个人博客">
+              <a href="/2017/11/27/Hexo-Github搭建个人博客/" rel="prev" title="Hexo+Github搭建个人博客">
                 Hexo+Github搭建个人博客 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -913,7 +913,7 @@ Q(\theta, \theta^{(i)}) &= E_{Z}[logP(Y,Z|\theta)|Y,\theta^{(i)}]\\
       <script type="text/javascript">
       function renderGitment(){
         var gitment = new Gitmint({
-            id: window.location.pathname,
+            id: decodeURI(window.location.pathname),
             owner: 'JoshuaW1990',
             repo: 'gitment-comments',
             
